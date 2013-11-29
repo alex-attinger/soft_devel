@@ -44,7 +44,7 @@
 % December 2002
 % November 2006  Correction to calculation of maxlogr (thanks to Chang Lei)
 
-function pim = polartrans(im, nrad, ntheta, cx, cy, linlog, shape)
+function mask = polartransPath(im, nrad, ntheta, cx, cy, linlog, shape)
 
 [rows, cols] = size(im);
 
@@ -87,4 +87,51 @@ yi = radius.*sin(theta) + cy;  % from.
 [x,y] = meshgrid([1:cols],[1:rows]);
 pim = interp2(x, y, double(im), xi, yi);
 
+pimgray = mat2gray(pim);
+start = false(size(pimgray));
+start(:,1)=true;
+stop = false(size(start));
+stop(:,end) = true;
 
+pimc = imcomplement(pimgray);
+
+
+D1=graydist(pimc,start);
+D2=graydist(pimc,stop);
+bw = false(size(pimc));
+bw(1,:) = true; 
+D3 = bwdist(bw);
+bw(1,:)=false;
+bw(end,:) = true;
+D4 = bwdist(bw);
+D = D1 + D2 +D3 +D4;
+D = round(D * 8) / 8;
+
+D(isnan(D)) = inf;
+paths = imregionalmin(D);
+figure(13); subplot(211);imagesc(D);subplot(212);imshow(paths)
+%paths_thinned_many = bwmorph(paths, 'thin', inf);
+
+
+
+mask = zeros(size(im));
+
+% for ix = -rmax:rmax-1
+%     for iy = -rmax:rmax-1
+%        
+%         r = sqrt((ix)^2+(iy)^2);
+%         th = atan2(iy,ix)+2*pi;
+%         pixval = interpImg(paths,[r,th],true);
+%         mask(iy+cy,ix+cx)=pixval>0;
+%     end
+% end
+for ir = 1:size(radius,1)
+    for it = 1: size(theta,2) 
+    cr = radius(ir,1);
+    ct = theta(1,it);
+    val = paths(ir,it);
+    p_y = round(cr*sin(ct))+cy;
+    p_x = round(cr*cos(ct))+cx;
+    mask(p_y,p_x) = val;
+    end
+end
