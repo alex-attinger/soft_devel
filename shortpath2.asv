@@ -2,12 +2,12 @@ ca
 dset = 2;
 layer =1;
 m = false(400,750);
-im = proj_meta(dset).rd(layer).template;
-im = mat2gray(im);
-im = template_preprocessing(im);
+imo = proj_meta(dset).rd(layer).template;
+img = mat2gray(imo);
+im = template_preprocessing(imo);
 f=figure;
 a = axes();
-h=imagesc(im);
+%h=imshow(imo);
 
 set(a, 'ButtonDownFcn', @clicker_pol_hist);
 set(h,'HitTest','off')
