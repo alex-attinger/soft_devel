@@ -1,6 +1,6 @@
 ca
 dset = 2;
-layer =1;
+layer =2;
 m = false(400,750);
 im = proj_meta(dset).rd(layer).template;
 im = mat2gray(im);
@@ -13,8 +13,8 @@ set(a, 'ButtonDownFcn', @clicker_pol_hist);
 set(h,'HitTest','off')
 
 %%
-imshow(img)
-cells = ginput(13);
+imshow(im)
+cells = ginput;
 disp('now select other stuff')
 
 stuff = ginput(13);
@@ -64,3 +64,12 @@ subplot(211)
 imagesc(mean(polar_stack_cell,3));
 subplot(212)
 imagesc(mean(polar_stack_stuff,3));
+
+%% mean cell stack
+ce={};
+
+window = 20;
+for ii = 1:size(cells,1)
+    ce(ii).data = im(cells(ii,2)-window:cells(ii,2)+window,cells(ii,1)-window:cells(ii,1)+window);
+end
+figure; imagesc(mean(cat(3,ce.data),3))

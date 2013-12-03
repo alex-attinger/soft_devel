@@ -36,12 +36,14 @@ i3 = imoverlay(im,bwperim(sum(bm,3)),[1 1 0]);
 
 
 %% doughnut filtering
-f_d =doughnut(31,7,14);
+%f_d =doughnut(31,7,14);
+% a thin ring seems to work better:
+f_d = doughnut(41,8,10);
 response_d = filter2(f_d,im,'same');
-i4 = imoverlay(mat2gray(response_d),bwperim(sum(bm,3)),[1 1 0]);
+i4 = imoverlay(mat2gray(mat2gray(response_d)-im),bwperim(sum(bm,3)),[1 1 0]);
 
 figure; imshow([i3; i4])
-
+figure; imshow(i2)
 %%
 n_rois = size(bm,3);
 score_max = zeros(n_rois,1);
@@ -67,8 +69,9 @@ end
 
 %% select which ones are rois
 bm_old = bm;
-cell_rois = false(1,n_rois);
-figure('name','Cell Selection');
+cell_rois = true(1,n_rois);
+deletedList =[];
+fig = figure('name','Cell Selection');
 
 a = axes();
 
@@ -76,21 +79,34 @@ h=imagesc([1:750],[1:400],i3);
 colormap gray
 %plot(activity{1,1}')
 set(a, 'ButtonDownFcn', @clicker_roi);
+set(fig,'KeyPressFcn',@redraw_roi);
 set(h,'HitTest','off')
 waitfor(a)
 figure;
-hold on;
-plot3(score_max(cell_rois),score_avg(cell_rois),score_ratio(cell_rois),'g.')
-
-plot3(score_max(~cell_rois),score_avg(~cell_rois),score_ratio(~cell_rois),'r.')
-xlabel('max')
-ylabel('avg')
-zlabel('ratio')
-
-hold off
-root = 'C:\Users\attialex\Desktop\files\';
-fn = ['cell_' dataset '_' num2str(dset) '_' num2str(layer)];
-save([root fn],'score_avg', 'score_max', 'score_ratio', 'cell_rois');
+% hold on;
+% plot3(score_max(cell_rois),score_avg(cell_rois),score_ratio(cell_rois),'g.')
+% 
+% plot3(score_max(~cell_rois),score_avg(~cell_rois),score_ratio(~cell_rois),'r.')
+% xlabel('max')
+% ylabel('avg')
+% zlabel('ratio')
+% 
+% hold off
+%%
+root = 'M:/attialex/seg_data/';
+fn = [dataset '_' num2str(dset) '_' num2str(layer)];
+data = struct();
+data.template = im;
+data.filt_response = response_d;
+data.filt_diff = mat2gray(response_d)-im;
+data.amap = act_map;
+data.rois = bm_old;
+data.cellList = cell_rois;
+data.deletedList = deletedList;
+data.score_max = score_max;
+data.score_ratio = score_ratio;
+data.score_avg = score_avg;
+save([root fn],'data');
 
 %%
 % i5 = im;
