@@ -20,7 +20,7 @@ end
 % 
 % h2 = fspecial('gaussian',5);
 % h = imfilter(h,h2);
-h=h./abs(sum(h(:)));
+%h=h./abs(sum(h(:)));
 
 end
 

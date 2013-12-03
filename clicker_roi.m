@@ -18,7 +18,9 @@ function clicker_roi(h,~)
     
     evalin('base',s2);
     
-    s3 = ['if ~isnan(current_roi); cell_rois(current_roi)=true;bm(:,:,current_roi) = false(400,750);i3 = imoverlay(im,bwperim(sum(bm,3)),[1 1 0]);axes(a);h=imagesc([1:750],[1:400],i3);set(a, ''ButtonDownFcn'', @clicker_roi);set(h,''HitTest'',''off'');end' ];
+    %s3 = ['if ~isnan(current_roi); cell_rois(current_roi)=false;bm(:,:,current_roi) = false(400,750);i3 = imoverlay(im,bwperim(sum(bm,3)),[1 1 0]);axes(a);h=imagesc([1:750],[1:400],i3);set(a, ''ButtonDownFcn'', @clicker_roi);set(h,''HitTest'',''off'');end' ];
+    
+    s3 = ['if ~isnan(current_roi);deletedList(end+1)=current_roi;cell_rois(deletedList)=false;i3 = imoverlay(im,bwperim(sum(bm(:,:,cell_rois),3)),[1 1 0]);axes(a);h=imagesc([1:750],[1:400],i3);set(a, ''ButtonDownFcn'', @clicker_roi);set(h,''HitTest'',''off'');end' ];
     evalin('base',s3);
     
     
