@@ -1,7 +1,7 @@
 % im = im1;
 % act_map = im2;
 dataset ='vml';
-dset = 1;
+dset = 2;
 layer = 3;
 im = proj_meta(dset).rd(layer).template;
 im = mat2gray(im);
