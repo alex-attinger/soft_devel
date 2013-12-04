@@ -1,11 +1,12 @@
 % im = im1;
 % act_map = im2;
+ca
 dataset ='vml';
 dset = 2;
-layer = 3;
+layer = 1;
 im = proj_meta(dset).rd(layer).template;
 im = mat2gray(im);
-act_map = proj_meta(1).rd(1).act_map;
+act_map = proj_meta(dset).rd(layer).act_map;
 step_mean = 1/10;
 V_mean=[.1:step_mean:1];
 V_act = [.1:1/10:1];
@@ -53,7 +54,7 @@ score_diff = zeros(n_rois,1);
 for ii = 1:n_rois
     pi_index = find(bm(:,:,ii));
     %pi = response_d(pi_index);
-    pi = diff_response(pi_indes);
+    pi = diff_response(pi_index);
     score_max(ii)=max(pi);
     score_avg(ii)=mean(pi);
     score_diff(ii)=score_max(ii)-min(pi);
@@ -64,13 +65,14 @@ inner_se = strel('diamond',1);
 score_ratio = zeros(1,n_rois);
 
 for ii  = 1:n_rois
+    pi = find(bm(:,:,ii));
     pi_inner = find(imerode(bm(:,:,ii),inner_se));
     pi_outer = find(imdilate(bm(:,:,ii),outer_se));
     score_ratio(ii) = mean(im(pi_outer))/(mean(im(pi_inner))+eps);
-    score_im_avg
-    score_amap_avg
-    score_im_max
-    score_amap_max
+    score_im_avg(ii) = mean(im(pi));
+    score_amap_avg(ii) = mean(act_map(pi));
+    score_im_max(ii) = max(im(pi));
+    score_amap_max(ii) = max(act_map(pi));
     
 end
 
@@ -114,6 +116,10 @@ data.score_max = score_max;
 data.score_ratio = score_ratio;
 data.score_avg = score_avg;
 data.score_diff = score_diff;
+data.score_im_max = score_im_max;
+data.score_im_avg = score_im_avg;
+data.score_amap_max = score_amap_max;
+data.score_amap_avg = score_amap_avg;
 save([root fn],'data');
 
 %%
