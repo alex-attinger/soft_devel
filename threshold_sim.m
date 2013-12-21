@@ -212,6 +212,7 @@ step = 0.05;
 max_factor = 3;
 median_save = zeros(1,n_samples);
 mean_save = zeros(1,n_samples);
+prc_save = zeros(1,n_samples);
 for ii = 1:n_samples
         %the background median window
         if act_trace(ii)<threshold_curr
@@ -224,6 +225,12 @@ for ii = 1:n_samples
             %threshold_curr = med+factor*sig;
             threshold_curr = 1.2*med;
             m = nanmean(window);
+                     if ii>window_length
+                prc = prctile(window,8);
+            else
+                prc = 0;
+            end
+           
         else
             above_t(ii) = true;
             if ii >n_active
@@ -234,7 +241,12 @@ for ii = 1:n_samples
                 end
             end
         end
-        
+%          if ii>window_length
+%                 prc = prctile(act_trace(ii-window_length:ii),8);
+%             else
+%                 prc = 0;
+%             end
+        prc_save(ii) = prc;
         median_save(ii)=med;
         mean_save(ii)=m;
         threshold(ii)=threshold_curr;
@@ -251,4 +263,6 @@ figure;
 plot(median_save,'r');
 hold on
 plot(mean_save,'b');
+plot(prc_save,'g');
+legend('Median','Mean','8%')
 
