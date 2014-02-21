@@ -17,7 +17,7 @@ end
 l = 1;
 m = zeros(size(displacement,3),1);
 n_anim = size(displacement,1);
-d = zeros(size(displacement,3),n_anim);
+d = nan(size(displacement,3),n_anim);
 figure
 hold on
 for ii = 1:size(displacement,1)
@@ -26,4 +26,4 @@ for ii = 1:size(displacement,1)
    
 end
 plot(d)
-plot(mean(d),'r','LineWidth',2)
+plot(nanmean(d,2),'r','LineWidth',2)

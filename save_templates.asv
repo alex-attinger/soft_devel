@@ -1,0 +1,18 @@
+%%
+path = '\\argon.fmi.ch\gkeller.mdrive\attialex\images\lfm\template_'
+
+for ii = 1:length(proj_meta)
+    for ll = 1:4
+        try
+            template = proj_meta(ii).rd(ll,1).template;
+            template = mat2gray(template);
+            temp_proc = template_preprocessing(template);
+            data = struct();
+            data.template = template;
+            data.temp_proc = temp_proc;
+            save([path num2str(ii) '_' num2str(ll)],'data')
+        catch
+            'err'
+        end
+    end
+end

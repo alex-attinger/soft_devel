@@ -4,7 +4,7 @@ source_name = 'set_1';
 load([source_root source_name]);
 
 %% list of variables we want to use
-varlist = {''}
+varlist = {''};
 X=[];
 Y=[];
 

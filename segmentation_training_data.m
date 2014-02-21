@@ -18,7 +18,7 @@ for ii = 1:size(files,1)
    
 end
 %% rearranging
-data = struct()
+data = struct();
 
 
 %% saving to file

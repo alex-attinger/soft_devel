@@ -1,5 +1,4 @@
-
-function P=findpeaks2(x,y,SlopeThreshold,AmpThreshold,smoothwidth,peakgroup,smoothtype,act_thresh,n_frames)
+function P=findpeaks2(x,y,SlopeThreshold,AmpThreshold,smoothwidth,peakgroup,smoothtype)
 % function P=findpeaks(x,y,SlopeThreshold,AmpThreshold,smoothwidth,peakgroup,smoothtype)
 % Function to locate the positive peaks in a noisy x-y time series data
 % set.  Detects peaks by looking for downward zero-crossings
@@ -17,14 +16,19 @@ function P=findpeaks2(x,y,SlopeThreshold,AmpThreshold,smoothwidth,peakgroup,smoo
 %   If smoothtype=1, rectangular (sliding-average or boxcar) 
 %   If smoothtype=2, triangular (2 passes of sliding-average)
 %   If smoothtype=3, pseudo-Gaussian (3 passes of sliding-average)
-% See http://terpconnect.umd.edu/~toh/spectrum/Smoothing.html and 
-% http://terpconnect.umd.edu/~toh/spectrum/PeakFindingandMeasurement.htm
-% T. C. O'Haver, 1995.  Version 5.1, Last revised December, 2012
-% Skip peaks if peak measurement results in NaN values
+% See http://terpconnect.umd.edu/~toh/spectrum/Smoothing.html and
+% http://terpconnect.umd.edu/~toh/spectrum/PeakFindingandMeasurement.htm T.
+% C. O'Haver, 1995.  Version 5.1, Last revised December, 2012 Skip peaks if
+% peak measurement results in NaN values 
 % Examples:
+% x=[-10:.1:10];y=exp(-(x).^2);findpeaks(x,y,0.0064959,0.27961,3,13,3)
 % findpeaks(0:.01:2,humps(0:.01:2),0,-1,5,5)
 % x=[0:.01:50];findpeaks(x,cos(x),0,-1,5,5)
-% x=[0:.01:5]';findpeaks(x,x.*sin(x.^2).^2,0,-1,5,5)
+% x=[0:.01:5]';findpeaks(x,x.*sin(x.^2).^2,0,-1,5,5) 
+%
+% Related functions:
+% findvalleys.m, findpeaksL.m, findpeaksb.m, findpeaksplot.m, peakstats.m,
+% findpeaksnr.m, findpeaksGSS.m, findpeaksLSS.m, findpeaksfit.m.
 
 % Copyright (c) 2013, Thomas C. O'Haver
 % 
@@ -46,10 +50,6 @@ function P=findpeaks2(x,y,SlopeThreshold,AmpThreshold,smoothwidth,peakgroup,smoo
 % OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 % THE SOFTWARE.
 % 
-
- active = y>act_thresh;
- active = filter(ones(1,n_frames),n_frames,active);
- active = active>1-1/n_frames;
 if nargin~=7;smoothtype=1;end  % smoothtype=1 if not specified in argument
 if smoothtype>3;smoothtype=3;end
 if smoothtype<1;smoothtype=1;end 
@@ -95,13 +95,11 @@ for j=2*round(smoothwidth/2)-1:length(y)-smoothwidth,
                 % position (x-value) and peak height (y-value).
                 % If peak measurements fails and results in NaN, skip this
                 % peak
-                if isnan(PeakX) || isnan(PeakY) || PeakY<AmpThreshold || PeakX < min(x) || PeakX>max(x) ,
+                if isnan(PeakX) || isnan(PeakY) || PeakY<AmpThreshold,
                     % Skip this peak
                 else % Otherwiase count this as a valid peak
-                    if active(round(PeakX))
-                        P(peak,:) = [round(peak) PeakX PeakY MeasuredWidth  1.0646.*PeakY*MeasuredWidth];
-                        peak=peak+1; % Move on to next peak
-                    end
+                    P(peak,:) = [round(peak) PeakX PeakY MeasuredWidth  1.0646.*PeakY*MeasuredWidth];
+                    peak=peak+1; % Move on to next peak
                 end
             end
         end
@@ -183,3 +181,4 @@ SmoothY=s./w;
     SmoothY(L)=(Y(L)+Y(L-1))./2;
   end
 % ----------------------------------------------------------------------
+
