@@ -6,16 +6,18 @@ function oii_eval(movie)
         ud.high = 0.15;
     
     ud.nFrames = size(movie,3);
-    mov = reshape(movie,nFrames,[]);
-    mov = double(mov);
-    MOV = fft(mo
+   
+    mov = double(movie);
+    %xdft(1:N/2+1);
+    MOV = fft(mov,[],3);
+    ud.MOV = abs(MOV(1:nFrames/2+1)).^2;
     % Create a figure and an axes to contain a 3-D surface plot.
     h.f=figure('menubar','none','color','k','Position', [100, 100, 1049, 895]);
     h.a1=axes('position',[0 0.025 0.975 1],'Units','pixels');
     axis off
     set(h.f,'userdata',ud);
     
-    
+    redraw(h);
     
     
     % Add a slider uicontrol to control the vertical scaling of the
@@ -46,6 +48,16 @@ function oii_eval(movie)
     
    
   
+end
+
+function redraw(h)
+    f = floor(ud.min*size(ud.MOV,3));
+    t = ceil(ud.min*size(ud.MOV,3));
+    %ud_loc = get(h.f,'userdata');
+    %overl = imoverlay(ud_loc.im,bwperim(ud_loc.bwcurr),[0 1 0]);
+    %imshow(overl,'Parent',h.a1);
+    im = sum(ud.MOV(:,:,f:t),3);
+    imshow(mat2gray(im),'Parent',h.a1);
 end
 
 function keypressfnc(hObj,event,h)
