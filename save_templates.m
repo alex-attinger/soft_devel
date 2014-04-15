@@ -1,5 +1,5 @@
 %%
-path = '\\argon.fmi.ch\gkeller.mdrive\attialex\images\lfm\template_'
+path = '\\argon.fmi.ch\gkeller.mdrive\attialex\images\scr\template_'
 
 for ii = 1:length(proj_meta)
     for ll = 1:4
